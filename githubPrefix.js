@@ -1,4 +1,4 @@
-var prefix = process.env.NEXT_PUBLIC_BASE_PATH || '';
+var prefix = '';
 
 const isGithubActions = process.env.GITHUB_ACTIONS || false;
 
