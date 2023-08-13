@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import { prefix } from "@/githubPrefix"
+import nextSVG from '@/public/next.svg'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -29,7 +30,7 @@ export default function Home() {
             >
               By{' '}
               <Image
-                src={`${prefix}/vercel.svg`}
+                src={nextSVG}
                 alt="Vercel Logo"
                 className={styles.vercelLogo}
                 width={100}
