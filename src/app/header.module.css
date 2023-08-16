@@ -1,0 +1,15 @@
+.header {
+    position: absolute;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 25px;
+}
+
+.link {
+    margin-right: 50px;
+}
+
+.linkSVG {
+    filter: invert(100%)
+}

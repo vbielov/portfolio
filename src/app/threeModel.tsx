@@ -6,7 +6,9 @@ import * as THREE from 'three'
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { removeRequestMeta } from 'next/dist/server/request-meta';
+
+// Example of use:
+// <Model3D modelSource="earth.glb" position={[0, 0, 0]} scale={[0.75, 0.75, 0.75]} rotation={[0.6, 0, 0]} orbitControl={true}/>
 
 interface Model3DProps 
 {
