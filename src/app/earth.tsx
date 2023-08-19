@@ -5,6 +5,9 @@ import React, { Component } from 'react';
 import * as THREE from 'three'
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
 class Earth extends Component
 {
@@ -12,8 +15,10 @@ class Earth extends Component
     private renderer: THREE.WebGLRenderer | null = null;
     private scene: THREE.Scene | null = null;
     private camera: THREE.OrthographicCamera | null = null;
-    private orbitControls: OrbitControls | null = null;
     private animationID: number = -1;
+    private isDragging: boolean = false;
+    private previousMousePosition: THREE.Vector2 = new THREE.Vector2(0, 0);
+    private rotation: THREE.Vector2 = new THREE.Vector2(0, 0);
 
     constructor(props: any)
     {
@@ -50,14 +55,30 @@ class Earth extends Component
 
     public startDrawing(): void 
     {
+        var i = 0;
         const drawLoop = () => 
         {
             this.animationID = requestAnimationFrame(drawLoop);
             // fuck you ts
-            if(this.scene == null || this.camera == null || this.renderer == null || this.orbitControls == null)
-            return;
-        
-            this.orbitControls.update();
+            if( this.scene == null || 
+                this.camera == null || 
+                this.renderer == null
+            ) return;
+
+            // this.composer?.render();
+            
+            for(var i = 0; i < this.scene.children.length; i++)
+            {
+                const child: THREE.Object3D = this.scene.children[i];
+                if(this.isDragging == false)
+                {
+                    this.rotation.y += 0.0025;
+                }
+                child.rotation.x = this.rotation.x;
+                child.rotation.y = this.rotation.y;
+            }
+
+            this.renderer.clear();
             this.renderer.render(this.scene, this.camera);
         }
 
@@ -84,7 +105,7 @@ class Earth extends Component
         }
 
         if(this.renderer != null)
-            this.renderer.setSize(width, height);
+            this.renderer.setSize(width, height, false);
 
         if(this.canvasRef.current != null)
             this.canvasRef.current.width = width;
@@ -103,7 +124,10 @@ class Earth extends Component
         }
 
         if(this.renderer == null)
+        {
             this.renderer = new THREE.WebGLRenderer({ canvas: this.canvasRef.current, antialias: true, alpha: true });
+            this.renderer.autoClear = false;
+        }
 
         if(this.camera == null)
         {
@@ -111,17 +135,10 @@ class Earth extends Component
             this.camera.position.z = 100;
         }
 
-        if(this.orbitControls == null)
-        {
-            this.orbitControls = new OrbitControls(this.camera, this.canvasRef.current);
-            this.orbitControls.autoRotate = true;
-        }
-        this.orbitControls.enabled = true;
-
         // Creating scene
         this.scene?.clear();
 
-        const sunPos = new THREE.Vector3(-4, 3, -2).normalize();
+        const sunPos = new THREE.Vector3(-4, 3, 3).normalize();
 
         const sphereGeometry = new THREE.SphereGeometry(0.75, 16, 16);
 
@@ -129,77 +146,189 @@ class Earth extends Component
             uColor: {
                 value: new THREE.Vector3(1, 1, 1)
             },
-            albedoMap: {
+            uAlbedoMap: {
                 value: new THREE.TextureLoader().load("earth_day_with_clouds.jpg")
             },
-            emissionMap: {
+            uEmissionMap: {
                 value: new THREE.TextureLoader().load("earth_night.jpg")
             },
-            sunPos: {
+            uLightSource: {
                 value: sunPos
             }
         };
 
-        const vertexShader = `
+        // Custom oribt controls
+        const thisRef = this;
+        this.canvasRef.current.addEventListener('mousedown', (event: MouseEvent) => {
+            event.preventDefault();
+            thisRef.isDragging = true;
+        });
+
+        this.canvasRef.current.addEventListener('mouseup', (event: MouseEvent) => {
+            event.preventDefault();
+            thisRef.isDragging = false;
+        });
+
+        this.canvasRef.current.addEventListener('mousemove', (event: MouseEvent) => {
+            event.preventDefault();
+
+            var deltaMove: THREE.Vector2 = new THREE.Vector2(
+                event.offsetX-thisRef.previousMousePosition.x,
+                event.offsetY-thisRef.previousMousePosition.y
+            );
+
+            function toRadians(degree: number): number
+            {
+                return degree * Math.PI / 180.0;
+            }
+
+            if(thisRef.isDragging) 
+            {
+                if(thisRef.scene == null)
+                    return;
+
+                thisRef.rotation.x += toRadians(deltaMove.y / 1.5);
+                thisRef.rotation.y += toRadians(deltaMove.x / 1.5);
+            }
+
+            thisRef.previousMousePosition = new THREE.Vector2(
+                event.offsetX, event.offsetY
+            );
+        });
+
+
+
+        const earth_vertexShader = `
             precision highp float;
 
             attribute vec3 position;
             attribute vec3 normal;
             attribute vec2 uv;
 
+            uniform mat4 modelMatrix;
             uniform mat4 modelViewMatrix;
             uniform mat4 projectionMatrix;
 
             varying vec2 vUv;
             varying vec3 vNormal;
-            varying vec3 vPosition;
 
             void main() 
             {
                 vUv = uv;
-                vNormal = normal;
+                vNormal = vec3(modelMatrix * vec4(normal, 0.0));
                 gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                vPosition = vec3(gl_Position.x, gl_Position.y, gl_Position.z);
             }
         `;
 
-        const fragmentShader = `
+        const earth_fragmentShader = `
             precision highp float;
 
-            varying vec3 vPosition;
             varying vec2 vUv;
             varying vec3 vNormal;
 
-            uniform sampler2D albedoMap;
-            uniform sampler2D emissionMap;
-            uniform vec3 uColor;
-            uniform vec3 sunPos;
+            uniform sampler2D uAlbedoMap;
+            uniform sampler2D uEmissionMap;
+            uniform vec3 uLightSource;
+            
+            uniform mat4 modelViewMatrix;
+            uniform mat4 projectionMatrix;
 
             void main() 
             {
                 float ambientLight = 0.05;
                 float lightSmoothness = 3.0;
                 float lightScale = 0.3;
-                float dotProduct = dot(vPosition, sunPos * lightSmoothness) - (1.0 - lightScale);
+                float dotProduct = dot(normalize(vNormal), normalize(uLightSource) * lightSmoothness) - (1.0 - lightScale);
                 dotProduct = min(max(dotProduct, 0.0), 1.0);
+
                 float lightValue = max(dotProduct, ambientLight);
+
                 float emissionStrength = 5.0;
                 float emissionOffset = 0.3;
-                float nightLight = max(1.0 - lightValue - emissionOffset, 0.0) * texture2D(emissionMap, vUv).x * emissionStrength;
+                float nightLight = max(1.0 - lightValue - emissionOffset, 0.0) * texture2D(uEmissionMap, vUv).x * emissionStrength;
+
                 lightValue += nightLight;
-                gl_FragColor = texture2D(albedoMap, vUv) * vec4(lightValue, lightValue, lightValue, 1.0);
+
+                gl_FragColor = texture2D(uAlbedoMap, vUv) * vec4(lightValue, lightValue, lightValue, 1.0);
             }
         `;
 
-        const material = new THREE.RawShaderMaterial({
+        const atmo_vertexShader = `
+            precision highp float;
+
+            attribute vec3 position;
+            attribute vec3 normal;
+
+            uniform mat4 modelMatrix;
+            uniform mat4 modelViewMatrix;
+            uniform mat4 projectionMatrix;
+
+            varying vec3 vNormal;
+            varying vec3 vPos;
+
+            void main() 
+            {
+                vNormal = vec3(modelMatrix * vec4(normal, 0.0));
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position * 2.0, 1.0);
+                vPos = gl_Position.xyz / gl_Position.w;
+            }
+        `;
+
+        const atmo_fragmentShader = `
+            precision highp float;
+
+            uniform vec3 uLightSource;
+
+            varying vec3 vNormal;
+            varying vec3 vPos;
+
+            float spikeFunction(float x)
+            {
+                return min(0.4 * x * x * x * x * x, 4.1 * (x - 1.0) * (x - 1.0)) * 5.0;
+            }
+
+            void main() 
+            {
+                float dst = length(vPos.xy * 1.1);
+                dst = min(max(dst, 0.0), 1.0);
+                
+                float value = spikeFunction(dst) * 1.25;
+
+
+                float dotProduct = dot(normalize(uLightSource), normalize(vNormal));
+                dotProduct = min(max(dotProduct, 0.0), 1.0);
+                dotProduct *= dotProduct * dotProduct;
+
+                vec3 color = vec3(0.17, 0.38, 0.7) * 1.0;
+                gl_FragColor = vec4(color.rgb, value * dotProduct);
+            } 
+        `;
+
+        const earth_material = new THREE.RawShaderMaterial({
             uniforms,
-            vertexShader,
-            fragmentShader,
-            wireframe: false
+            vertexShader: earth_vertexShader,
+            fragmentShader: earth_fragmentShader,
+            wireframe: false,
+            blending: THREE.AdditiveBlending,
+            depthTest: true
+        });
+        
+        const atmo_material = new THREE.RawShaderMaterial({
+            uniforms,
+            vertexShader: atmo_vertexShader,
+            fragmentShader: atmo_fragmentShader,
+            wireframe: false,
+            blending: THREE.AdditiveBlending,
+            depthTest: true
         });
 
-        const mesh = new THREE.Mesh(sphereGeometry, material);
-        this.scene.add(mesh);
+        
+        const earth_mesh = new THREE.Mesh(sphereGeometry, earth_material);
+        const atmo_mesh = new THREE.Mesh(sphereGeometry, atmo_material);
+
+        
+        this.scene.add(earth_mesh);
+        this.scene.add(atmo_mesh);
 
         if(WebGL.isWebGLAvailable() == false) 
         {
