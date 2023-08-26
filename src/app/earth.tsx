@@ -1,13 +1,8 @@
-'use client'
+ 'use client'
 
 import React, { Component } from 'react';
-
 import * as THREE from 'three'
 import WebGL from 'three/addons/capabilities/WebGL.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
 class Earth extends Component
 {
@@ -159,22 +154,40 @@ class Earth extends Component
 
         // Custom oribt controls
         const thisRef = this;
-        this.canvasRef.current.addEventListener('mousedown', (event: MouseEvent) => {
-            event.preventDefault();
-            thisRef.isDragging = true;
-        });
 
-        this.canvasRef.current.addEventListener('mouseup', (event: MouseEvent) => {
-            event.preventDefault();
-            thisRef.isDragging = false;
-        });
+        function ToggleDragging(event: MouseEvent | TouchEvent, state: boolean)
+        {
+            thisRef.isDragging = state;
+            
+            if((event as TouchEvent).touches == undefined || (event as TouchEvent).touches.length <= 0)
+                return;
 
-        this.canvasRef.current.addEventListener('mousemove', (event: MouseEvent) => {
-            event.preventDefault();
+            var inputX = (event as MouseEvent).offsetX == undefined ? 
+            (event as TouchEvent).touches[0].clientX
+            : (event as MouseEvent).offsetX;
+
+            var inputY = (event as MouseEvent).offsetY == undefined ? 
+                (event as TouchEvent).touches[0].clientY
+                : (event as MouseEvent).offsetY;
+            
+            thisRef.previousMousePosition = new THREE.Vector2(
+                inputX, inputY
+            );
+        }
+
+        function UpdateDraggingMove(event: MouseEvent | TouchEvent)
+        {
+            var inputX = (event as MouseEvent).offsetX == undefined ? 
+                (event as TouchEvent).touches[0].clientX
+                : (event as MouseEvent).offsetX;
+
+            var inputY = (event as MouseEvent).offsetY == undefined ? 
+                (event as TouchEvent).touches[0].clientY
+                : (event as MouseEvent).offsetY;
 
             var deltaMove: THREE.Vector2 = new THREE.Vector2(
-                event.offsetX-thisRef.previousMousePosition.x,
-                event.offsetY-thisRef.previousMousePosition.y
+                inputX-thisRef.previousMousePosition.x,
+                inputY-thisRef.previousMousePosition.y
             );
 
             function toRadians(degree: number): number
@@ -192,10 +205,27 @@ class Earth extends Component
             }
 
             thisRef.previousMousePosition = new THREE.Vector2(
-                event.offsetX, event.offsetY
+                inputX, inputY
             );
-        });
+        }
 
+        this.canvasRef.current.addEventListener('mousedown', (event: MouseEvent) => 
+            ToggleDragging(event, true)
+        );
+        this.canvasRef.current.addEventListener("touchstart", (event: TouchEvent) => 
+            ToggleDragging(event, true), {passive: true}
+        );
+        this.canvasRef.current.addEventListener('mouseup', (event: MouseEvent) => 
+            ToggleDragging(event, false)
+        );
+        this.canvasRef.current.addEventListener("touchend", (event: TouchEvent) => 
+        ToggleDragging(event, false), {passive: true}
+        );
+        this.canvasRef.current.addEventListener("touchcancel", (event: TouchEvent) => 
+        ToggleDragging(event, false), {passive: true}
+        );
+        this.canvasRef.current.addEventListener('mousemove', UpdateDraggingMove);
+        this.canvasRef.current.addEventListener("touchmove", UpdateDraggingMove, {passive: true});
 
 
         const earth_vertexShader = `

@@ -1,17 +1,31 @@
 .pageFace {
     display: flex;
-    height: 100vh;
-    width: 90vw;
     flex-direction: row;
     align-items: center;
+    align-content: center;
     justify-content: center;
     align-self: center;
+    max-width: 90vw;
+    min-height: 100vh;
+
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-top: 75px;
+    margin-bottom: 75px;
+
 }
   
 .infoBlock {
     display: flex;
     flex-direction: column;
-    max-width: 30vw;
+    justify-content: center;
+    
 }
   
 .followButton {
@@ -33,6 +47,9 @@
 }
   
 .modelParent {
+    max-width: 75vw;
+    max-height: 75vw;
     width: 40rem;
     height: 40rem;
+
 }

@@ -1,13 +1,13 @@
 .header {
     position: absolute;
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
+    top: 0;
+    right: 0;
     margin-top: 25px;
+    margin-right: 25px;
 }
 
 .link {
-    margin-right: 50px;
+    margin-left: 50px;
 }
 
 .linkSVG {
