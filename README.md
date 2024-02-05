@@ -1,5 +1,5 @@
 This is my portfolio project made with [Next.js](https://nextjs.org/), [Three.js](https://threejs.org/) and hosted statically on [GitHub Pages
-](https://pages.github.com/)under the link: [https://vbielov.github.io/portfolio/](https://vofes.github.io/portfolio/).
+](https://pages.github.com/)under the link: [https://vbielov.github.io/portfolio/](https://vbielov.github.io/portfolio/).
 
 ## Making changes
 
