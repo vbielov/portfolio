@@ -4,6 +4,10 @@ import React, { Component } from 'react';
 import * as THREE from 'three'
 import WebGL from 'three/addons/capabilities/WebGL.js';
 
+interface EarthProps {
+    isTouchable?: boolean;
+}
+
 class Earth extends Component
 {
     private canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -14,10 +18,12 @@ class Earth extends Component
     private isDragging: boolean = false;
     private previousMousePosition: THREE.Vector2 = new THREE.Vector2(0, 0);
     private rotation: THREE.Vector2 = new THREE.Vector2(0, 0);
+    private isTouchable: boolean = false;
 
-    constructor(props: any)
+    constructor(props: EarthProps)
     {
         super(props);
+        this.isTouchable = props.isTouchable || false;
         this.canvasRef = React.createRef();
     }
 
@@ -142,10 +148,10 @@ class Earth extends Component
                 value: new THREE.Vector3(1, 1, 1)
             },
             uAlbedoMap: {
-                value: new THREE.TextureLoader().load("earth_day_with_clouds.jpg")
+                value: new THREE.TextureLoader().load("/earth_day_with_clouds.jpg")
             },
             uEmissionMap: {
-                value: new THREE.TextureLoader().load("earth_night.jpg")
+                value: new THREE.TextureLoader().load("/earth_night.jpg")
             },
             uLightSource: {
                 value: sunPos
@@ -209,23 +215,27 @@ class Earth extends Component
             );
         }
 
-        this.canvasRef.current.addEventListener('mousedown', (event: MouseEvent) => 
-            ToggleDragging(event, true)
-        );
-        this.canvasRef.current.addEventListener("touchstart", (event: TouchEvent) => 
-            ToggleDragging(event, true), {passive: true}
-        );
-        this.canvasRef.current.addEventListener('mouseup', (event: MouseEvent) => 
-            ToggleDragging(event, false)
-        );
-        this.canvasRef.current.addEventListener("touchend", (event: TouchEvent) => 
-        ToggleDragging(event, false), {passive: true}
-        );
-        this.canvasRef.current.addEventListener("touchcancel", (event: TouchEvent) => 
-        ToggleDragging(event, false), {passive: true}
-        );
-        this.canvasRef.current.addEventListener('mousemove', UpdateDraggingMove);
-        this.canvasRef.current.addEventListener("touchmove", UpdateDraggingMove, {passive: true});
+
+        if(this.isTouchable == true)
+        {
+            this.canvasRef.current.addEventListener('mousedown', (event: MouseEvent) => 
+                ToggleDragging(event, true)
+            );
+            this.canvasRef.current.addEventListener("touchstart", (event: TouchEvent) => 
+                ToggleDragging(event, true), {passive: true}
+            );
+            this.canvasRef.current.addEventListener('mouseup', (event: MouseEvent) => 
+                ToggleDragging(event, false)
+            );
+            this.canvasRef.current.addEventListener("touchend", (event: TouchEvent) => 
+            ToggleDragging(event, false), {passive: true}
+            );
+            this.canvasRef.current.addEventListener("touchcancel", (event: TouchEvent) => 
+            ToggleDragging(event, false), {passive: true}
+            );
+            this.canvasRef.current.addEventListener('mousemove', UpdateDraggingMove);
+            this.canvasRef.current.addEventListener("touchmove", UpdateDraggingMove, {passive: true});
+        }
 
 
         const earth_vertexShader = `

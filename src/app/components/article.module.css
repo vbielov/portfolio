@@ -7,7 +7,6 @@
     align-self: center;
     max-width: 90vw;
     min-height: 100vh;
-
 }
 
 .content {
@@ -29,7 +28,7 @@
 }
   
 .followButton {
-    margin-top: 2em;
+    margin: 2em 2em 0em 0em;
     width: 150px;
     height: 30px;
     cursor: pointer;
@@ -51,5 +50,5 @@
     max-height: 75vw;
     width: 40rem;
     height: 40rem;
-
+    cursor: grab;
 }

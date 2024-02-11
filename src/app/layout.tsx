@@ -1,4 +1,5 @@
 import './globals.css'
+import styles from './layout.module.css'
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
 

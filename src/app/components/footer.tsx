@@ -6,7 +6,7 @@ export default function Footer()
 {
     return(
         <footer className={styles.footer}>
-            @2023 vofes.github.io/portfolio
+            @2024 vbielov.github.io/portfolio
         </footer>
     )
 };
