@@ -148,10 +148,10 @@ class Earth extends Component
                 value: new THREE.Vector3(1, 1, 1)
             },
             uAlbedoMap: {
-                value: new THREE.TextureLoader().load("/earth_day_with_clouds.jpg")
+                value: new THREE.TextureLoader().load("earth_day_with_clouds.jpg")
             },
             uEmissionMap: {
-                value: new THREE.TextureLoader().load("/earth_night.jpg")
+                value: new THREE.TextureLoader().load("earth_night.jpg")
             },
             uLightSource: {
                 value: sunPos
