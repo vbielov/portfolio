@@ -6,7 +6,7 @@ This is my portfolio project made with [Next.js](https://nextjs.org/), [Three.js
 First, pull this repository:
 
 ```shell
-git clone https://github.com/vofes/portfolio.git
+git clone https://github.com/vbielov/portfolio.git
 ```
 
 Download npm dependencies:
