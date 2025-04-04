@@ -141,17 +141,17 @@ class Earth extends Component
 
         const sunPos = new THREE.Vector3(-4, 3, 3).normalize();
 
-        const sphereGeometry = new THREE.SphereGeometry(0.75, 16, 16);
+        const sphereGeometry = new THREE.SphereGeometry(0.75, 32, 32);
 
         const uniforms = {
             uColor: {
                 value: new THREE.Vector3(1, 1, 1)
             },
             uAlbedoMap: {
-                value: new THREE.TextureLoader().load("earth_day_with_clouds.jpg")
+                value: new THREE.TextureLoader().load("/earth_day_with_clouds.jpg")
             },
             uEmissionMap: {
-                value: new THREE.TextureLoader().load("earth_night.jpg")
+                value: new THREE.TextureLoader().load("/earth_night.jpg")
             },
             uLightSource: {
                 value: sunPos

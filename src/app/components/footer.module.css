@@ -1,7 +1,10 @@
 .footer {
-    /* position: absolute; */
     display: flex;
     width: 100vw;
     justify-content: flex-end;
     padding: 25px;
+}
+
+.footer a {
+    margin-left: 20px;
 }
