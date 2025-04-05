@@ -24,10 +24,10 @@ export default function Home()
                 </p>
                 <div>
                     <button className={styles.followButton}>
-                        <a href="/contact">Kontakt</a>
+                        <a href={(process.env.ASSET_PREFIX || "")  + "/contact"}>Kontakt</a>
                     </button>
                     <button className={styles.followButton}>
-                        <a href="/projects">Meine Projekte</a>
+                        <a href={(process.env.ASSET_PREFIX || "")  + "/projects"}>Meine Projekte</a>
                     </button>
                 </div>
             </div>
