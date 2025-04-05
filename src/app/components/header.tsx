@@ -7,6 +7,7 @@ import githubSVG from "@/public/github.svg"
 import linkedInSVG from "@/public/linkedin.svg"
 import Earth from './earth'
 import { usePathname } from 'next/navigation';
+import Link from 'next/link'
 
 export default function Header()
 {
@@ -18,9 +19,9 @@ export default function Header()
         <header className={styles.header}>
             <div>
                 {usePathname() !== '/' && 
-                    <a className={styles.link + " " + styles.logo} href="/">
+                    <Link className={styles.link + " " + styles.logo} href="/">
                         <Earth {...earthProps}/>
-                    </a>
+                    </Link>
                 }
             </div>
             <div>

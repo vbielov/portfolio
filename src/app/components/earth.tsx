@@ -3,6 +3,8 @@
 import React, { Component } from 'react';
 import * as THREE from 'three'
 import WebGL from 'three/addons/capabilities/WebGL.js';
+import earth_day_with_clouds from '@/public/earth_day_with_clouds.jpg'
+import earth_night from '@/public/earth_night.jpg'
 
 interface EarthProps {
     isTouchable?: boolean;
@@ -148,10 +150,10 @@ class Earth extends Component
                 value: new THREE.Vector3(1, 1, 1)
             },
             uAlbedoMap: {
-                value: new THREE.TextureLoader().load((process.env.ASSET_PREFIX || "")  + "/earth_day_with_clouds.jpg")
+                value: new THREE.TextureLoader().load(earth_day_with_clouds.src)
             },
             uEmissionMap: {
-                value: new THREE.TextureLoader().load((process.env.ASSET_PREFIX || "") + "/earth_night.jpg")
+                value: new THREE.TextureLoader().load(earth_night.src)
             },
             uLightSource: {
                 value: sunPos

@@ -4,6 +4,7 @@ import Article from './components/article'
 import Footer from './components/footer'
 import Earth from './components/earth'
 import { useEffect, useRef } from 'react';
+import Link from 'next/link'
 
 export default function Home()
 {
@@ -24,10 +25,10 @@ export default function Home()
                 </p>
                 <div>
                     <button className={styles.followButton}>
-                        <a href={(process.env.ASSET_PREFIX || "")  + "/contact"}>Kontakt</a>
+                        <Link href="/contact">Kontakt</Link>
                     </button>
                     <button className={styles.followButton}>
-                        <a href={(process.env.ASSET_PREFIX || "")  + "/projects"}>Meine Projekte</a>
+                        <Link href="/projects">Meine Projekte</Link>
                     </button>
                 </div>
             </div>
