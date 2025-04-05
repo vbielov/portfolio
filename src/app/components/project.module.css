@@ -36,19 +36,3 @@
     text-align: center;
     gap: 2px;
 }
-
-/* https://www.amitmerchant.com/simple-blinking-cursor-animation-using-css/ */
-@keyframes cursor-blink {
-    0% {
-      opacity: 0;
-    }
-}
-
-.tileText::after {
-    content: "";
-    width: 3px;
-    height: 16px;
-    background: white;
-    display: inline-block;
-    animation: cursor-blink 1.5s steps(2) infinite;
-}

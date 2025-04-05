@@ -24,7 +24,7 @@ export default function Header()
                 }
             </div>
             <div>
-                <a className={styles.link} href="mailto:v.bielov@hm.edu?subject=Mail from vbielov.github.io">
+                <a className={styles.link} href="mailto:bielovlad@gmail.com?subject=Mail from vbielov.github.io">
                     <Image
                         className={styles.linkSVG}
                         priority 

@@ -7,7 +7,7 @@ let basePath = ''
 
 if (isGithubActions) {
   // trim off `<owner>/`
-  const repo = 'portfolio';
+  const repo = '/portfolio';
 
   assetPrefix = `/${repo}/`
   basePath = `/${repo}`

@@ -7,7 +7,7 @@ export default function Footer()
     return(
         <footer className={styles.footer}>
             <p>@2025 vbielov.github.io/portfolio</p>            
-            <a href="#">Datenschutzerklärung</a>
+            {/* <a href="/privacyPolicy">Datenschutzerklärung</a> */}
         </footer>
     )
 };

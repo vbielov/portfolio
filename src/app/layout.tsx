@@ -9,8 +9,8 @@ const monteserratFont = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: 'Portfolio',
-  description: 'Small project with nextjs, react, threejs',
+  title: 'Vladyslav Bielov Portfolio',
+  description: 'My portfolio made with nextjs, react, threejs',
 }
 
 export default function RootLayout({
