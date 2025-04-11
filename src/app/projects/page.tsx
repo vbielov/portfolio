@@ -13,22 +13,26 @@ export default function Projects()
 {
     const crabTradesProps = {
         title: "CrabTrades",
-        background: crabtrades
+        background: crabtrades,
+        link: "https://crabtrades.nentwich.dev/"
     };
 
     const nukeGreensProps = {
         title: "NukeGreensNuke these Greens: Mars vs Earth",
-        background: nukeGreens
+        background: nukeGreens,
+        link: "https://bearwithmeplease.itch.io/nuke-these-greens"
     }
 
     const spookyProps = {
         title: "Survive The Bunker",
-        background: spooky
+        background: spooky,
+        link: "https://bearwithmeplease.itch.io/survive-the-bunker"
     }
 
     const loremProps = {
         title: "LoremScriptum Compiler",
-        background: lorem
+        background: lorem,
+        link: "https://github.com/vbielov/LoremScriptumCompiler"
     }
 
     return(
