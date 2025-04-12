@@ -75,7 +75,7 @@ class Earth extends Component
                 const child: THREE.Object3D = this.scene.children[i];
                 if(this.isDragging == false)
                 {
-                    this.rotation.y += 0.0025;
+                    this.rotation.y += 0.0025 / 3.0;
                 }
                 child.rotation.x = this.rotation.x;
                 child.rotation.y = this.rotation.y;
@@ -144,6 +144,7 @@ class Earth extends Component
         const sunPos = new THREE.Vector3(-4, 3, 3).normalize();
 
         const sphereGeometry = new THREE.SphereGeometry(0.75, 32, 32);
+        const circleGeomtry = new THREE.CircleGeometry(1.0, 32);
 
         const uniforms = {
             uColor: {
@@ -159,6 +160,11 @@ class Earth extends Component
                 value: sunPos
             }
         };
+        // uniforms.uAlbedoMap.value.minFilter = THREE.LinearFilter;
+        uniforms.uAlbedoMap.value.needsUpdate = true;
+        // uniforms.uEmissionMap.value.minFilter = THREE.LinearFilter;
+        uniforms.uEmissionMap.value.needsUpdate = true;
+
 
         // Custom oribt controls
         const thisRef = this;
@@ -346,6 +352,51 @@ class Earth extends Component
             } 
         `;
 
+        const ring_vertexShader = `
+            precision highp float;
+
+            attribute vec3 position;
+            attribute vec3 normal;
+            attribute vec2 uv;
+
+            uniform mat4 modelMatrix;
+            uniform mat4 modelViewMatrix;
+            uniform mat4 projectionMatrix;
+
+            varying vec2 vUv;
+            varying vec3 vNormal;
+
+            void main() 
+            {
+                vUv = uv;
+                vNormal = vec3(modelMatrix * vec4(normal, 0.0));
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `;
+
+        const ring_fragmentShader = `
+            precision highp float;
+            varying vec3 vNormal;
+            varying vec3 vPos;
+            varying vec2 vUv;
+
+            precision highp float;
+            
+            void main() {
+                vec2 uv_o = (vUv - vec2(0.5, 0.5)) * 2.0;
+                float value = length(uv_o.x * uv_o.x + uv_o.y * uv_o.y);
+                if (value < 0.97) {
+                    discard;
+                }
+                float angle = atan(uv_o.y / uv_o.x) * 100.0;
+                if (mod(angle, 10.0) < 8.0) {
+                    discard;
+                }
+                
+                gl_FragColor = vec4(1.0, 1.0, 1.0, 0.25);
+            }
+        `;
+
         const earth_material = new THREE.RawShaderMaterial({
             uniforms,
             vertexShader: earth_vertexShader,
@@ -361,14 +412,25 @@ class Earth extends Component
             fragmentShader: atmo_fragmentShader,
             wireframe: false,
             blending: THREE.AdditiveBlending,
+            depthTest: false // note it.
+        });
+
+        const ring_material = new THREE.RawShaderMaterial({
+            vertexShader: ring_vertexShader,
+            fragmentShader: ring_fragmentShader,
+            side: THREE.DoubleSide,
+            blending: THREE.AdditiveBlending,
             depthTest: true
         });
 
         
+        circleGeomtry.rotateX(0.75);
         const earth_mesh = new THREE.Mesh(sphereGeometry, earth_material);
+        const ring_mesh = new THREE.Mesh(circleGeomtry, ring_material);
         const atmo_mesh = new THREE.Mesh(sphereGeometry, atmo_material);
-
         
+        
+        this.scene.add(ring_mesh);
         this.scene.add(earth_mesh);
         this.scene.add(atmo_mesh);
 

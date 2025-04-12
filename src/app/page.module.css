@@ -16,10 +16,21 @@
     cursor: pointer;
     border: none;
     border-radius: 5px;
-    background-color: #3f6cde;
+    background: #3F6CDE;
+    background: linear-gradient(90deg,rgb(63, 108, 222) 35%, rgb(48, 82, 168) 100%);
+    filter: brightness(0.9);
     font-size: 1rem;
     letter-spacing: 1px;
     box-shadow: 0 5px 15px 0 rgba(63,108,222, 0.15);
+    transition: all 0.25s ease-in-out;
+}
+
+.followButton:hover {
+    /* background: #3F6CDE; */
+    /* background: linear-gradient(90deg,rgba(63, 108, 222, 1) 35%, rgba(12, 173, 232, 1) 100%); */
+    box-shadow: 0 5px 15px 0 rgba(63,108,222, 0.5);
+    filter: brightness(1.1);
+    transition: all 0.25s ease-in-out;
 }
   
 .title {
@@ -44,4 +55,11 @@
     margin-top: 75px;
     margin-bottom: 75px;
     line-height: 2;
+}
+
+.buttonContainer {
+    width: 100%;
+    display: flex;
+    /* justify-content: center; */
+    flex-wrap: wrap;
 }

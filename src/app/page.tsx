@@ -8,9 +8,10 @@ import Link from 'next/link'
 
 export default function Home()
 {
+    
     const earthProps = {
         isTouchable: true
-    }
+    };
 
     const article = { 
         content: <div className={styles.content}>
@@ -23,7 +24,7 @@ export default function Home()
                     Ich begeistere mich für Algorithmen und dafür, wie Computer<br/>
                     und die digitale Welt um uns herum funktionieren.
                 </p>
-                <div>
+                <div className={styles.buttonContainer}>
                     <button className={styles.followButton}>
                         <Link href="/contact">Kontakt</Link>
                     </button>
@@ -38,14 +39,13 @@ export default function Home()
             </div>
         </div>
     }
-
     return (
-    <main className={styles.main}>
-        <Header/>
-
-        <Article {...article}/>
-
-        <Footer/>
-    </main>
+        <main className={styles.main}>
+            <Header/>
+    
+            <Article {...article}/>
+    
+            <Footer/>
+        </main>
     )
 }

@@ -1,7 +1,8 @@
 .tile {
-    margin: 150px 25px;
+    margin: 15px;
     height: 300px;
-    width: 200px;
+    max-width: 200px;
+    min-width: 150px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,12 +18,6 @@
     filter: blur(0.1rem);
     transition: filter 0.5s;
     transition: scale 0.5s;
-    /* scale: 1; */
-}
-
-.tileBackground:hover {
-    filter: blur(0);
-    scale: 1.1;
 }
 
 .tileText {
@@ -30,9 +25,30 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-weight: bold;
     width: 150px;
     text-wrap: wrap;
     text-align: center;
     gap: 2px;
+}
+
+.tileTitle {
+    font-weight: bold;
+    display: block;
+}
+
+.tileBackside {
+    display: none;
+}
+
+.tile:hover .tileBackside {
+    display: block;
+}
+
+.tile:hover .tileTitle {
+    display: none;
+}
+
+.tile:hover .tileBackground {
+    filter: blur(0rem) brightness(0.7);
+    scale: 1.05;
 }
