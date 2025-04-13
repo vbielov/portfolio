@@ -21,6 +21,7 @@ class Earth extends Component
     private previousMousePosition: THREE.Vector2 = new THREE.Vector2(0, 0);
     private rotation: THREE.Vector2 = new THREE.Vector2(0, 0);
     private isTouchable: boolean = false;
+    private ring: THREE.Mesh | null = null;
 
     constructor(props: EarthProps)
     {
@@ -62,24 +63,24 @@ class Earth extends Component
         const drawLoop = () => 
         {
             this.animationID = requestAnimationFrame(drawLoop);
-            // fuck you ts
             if( this.scene == null || 
                 this.camera == null || 
                 this.renderer == null
             ) return;
 
-            // this.composer?.render();
-            
+            if(this.isDragging == false)
+                this.rotation.y += 0.0025;
+
             for(var i = 0; i < this.scene.children.length; i++)
             {
                 const child: THREE.Object3D = this.scene.children[i];
-                if(this.isDragging == false)
-                {
-                    this.rotation.y += 0.0025 / 3.0;
-                }
                 child.rotation.x = this.rotation.x;
                 child.rotation.y = this.rotation.y;
             }
+
+            let material: THREE.RawShaderMaterial = this.ring?.material as THREE.RawShaderMaterial;
+            let uni: { uSpin: { value: number } } = material.uniforms as { uSpin: { value: number } };
+            uni.uSpin.value += 0.2;
 
             this.renderer.clear();
             this.renderer.render(this.scene, this.camera);
@@ -379,8 +380,24 @@ class Earth extends Component
             varying vec3 vNormal;
             varying vec3 vPos;
             varying vec2 vUv;
+            uniform float uSpin;
 
             precision highp float;
+
+            float atan2(float y, float x) {
+                if (x > 0.0)
+                    return atan(y / x);
+                if (y >= 0.0 && x < 0.0)
+                    return atan(y / x) + 3.1415;
+                if (y < 0.0 && x < 0.0)
+                    return atan(y / x) - 3.1415;
+                if (y > 0.0 && x == 0.0)
+                    return 3.1415 / 2.0;
+                if (y < 0.0 && x == 0.0)
+                    return -3.1415 / 2.0;
+                return 0.0;
+            }
+
             
             void main() {
                 vec2 uv_o = (vUv - vec2(0.5, 0.5)) * 2.0;
@@ -388,12 +405,19 @@ class Earth extends Component
                 if (value < 0.97) {
                     discard;
                 }
-                float angle = atan(uv_o.y / uv_o.x) * 100.0;
-                if (mod(angle, 10.0) < 8.0) {
+                float angle = atan2(uv_o.y, uv_o.x);
+                if (mod(angle * 100.0 + uSpin, 10.0) < 8.0) {
                     discard;
                 }
+                float range = (angle + 3.14) / (3.14 * 2.0);
+                range += uSpin / 100.0;
+                range = mod(range, 1.0);
+                if (range > 0.9) {
+                    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+                } else {
+                    gl_FragColor = vec4(1.0, 1.0, 1.0, 0.25);
+                }
                 
-                gl_FragColor = vec4(1.0, 1.0, 1.0, 0.25);
             }
         `;
 
@@ -416,6 +440,7 @@ class Earth extends Component
         });
 
         const ring_material = new THREE.RawShaderMaterial({
+            uniforms: { uSpin: { value: 0.0 } },
             vertexShader: ring_vertexShader,
             fragmentShader: ring_fragmentShader,
             side: THREE.DoubleSide,
@@ -428,9 +453,9 @@ class Earth extends Component
         const earth_mesh = new THREE.Mesh(sphereGeometry, earth_material);
         const ring_mesh = new THREE.Mesh(circleGeomtry, ring_material);
         const atmo_mesh = new THREE.Mesh(sphereGeometry, atmo_material);
+        this.ring = ring_mesh;
         
-        
-        this.scene.add(ring_mesh);
+        this.scene.add(this.ring);
         this.scene.add(earth_mesh);
         this.scene.add(atmo_mesh);
 
