@@ -8,6 +8,7 @@ import crabtrades from "@/public/crabtrades.jpg"
 import nukeGreens from "@/public/nukegreens.jpg"
 import spooky from "@/public/spooky.jpg"
 import lorem from "@/public/lorem.jpg"
+import munichmotorsport from "@/public/munichmotorsport.jpg"
 
 export default function Projects() 
 {
@@ -36,6 +37,13 @@ export default function Projects()
             backsideText: "Compiler for basic programming language with Latin-inspired syntax ",
             background: lorem,
             link: "https://github.com/vbielov/LoremScriptumCompiler"
+        },
+        {
+            title: "municHMotorsport",
+            backsideText: "Member of Electrics-Subteam in Formula Student Team",
+            background: munichmotorsport,
+            link: "https://munichmotorsport.de/",
+
         },
     ];
 
