@@ -19,8 +19,8 @@ export default function Home()
                 <h1 className={styles.title}>Willkommen</h1>
                 <p>
                     Mein Name ist <b>Vladyslav Bielov</b>,<br/>
-                    ich bin Informatikstudent und Hobby-Entwickler mit Wohnsitz in Bayern, Deutschland.<br/>
-                    Gelegentlich arbeite ich an kleinen Projekten im Bereich Game-Development und Back-End.<br/>
+                    ich bin Informatikstudent mit Wohnsitz in Bayern, Deutschland.<br/>
+                    Gelegentlich arbeite ich an Projekten im Bereich Embedded und Back-End.<br/>
                     Ich begeistere mich für Algorithmen und dafür, wie Computer<br/>
                     und die digitale Welt um uns herum funktionieren.
                 </p>
